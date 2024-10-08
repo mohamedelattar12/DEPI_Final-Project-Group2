@@ -5,14 +5,14 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.Actions;
 
 public class BrowserActions {
-
     private WebDriver driver;
 
-    public BrowserActions(WebDriver driver){
+    public BrowserActions(WebDriver driver) {
         this.driver = driver;
     }
 
-    /******************************* URL Controlling and Navigation *********************************/
+    /***************************  URL Controlling and navigation  ***********************************/
+
     public BrowserActions navigateToURL(String url) {
         driver.navigate().to(url);
         return this;
@@ -42,17 +42,7 @@ public class BrowserActions {
         return this;
     }
 
-    public BrowserActions scrollToBottom() {
-        new Actions(driver).scrollByAmount(0, 2500).build().perform();
-        return this;
-    }
-
-    public BrowserActions scrollToAmount(int width, int height) {
-        new Actions(driver).scrollByAmount(width, height).build().perform();
-        return this;
-    }
-
-    /****************************************** Cookies ****************************************/
+    /***************************  Cookies  ***********************************/
 
     public BrowserActions addCookie(Cookie cookie) {
         driver.manage().addCookie(cookie);
@@ -65,8 +55,8 @@ public class BrowserActions {
         return this;
     }
 
-    public BrowserActions deleteCookieWithName(String name) {
-        driver.manage().deleteCookieNamed(name);
+    public BrowserActions deleteCookieWithName(String cookieName) {
+        driver.manage().deleteCookieNamed(cookieName);
         return this;
     }
 
@@ -75,5 +65,30 @@ public class BrowserActions {
         return this;
     }
 
-    /********************************** Window Control **************************************/
+    /***************************** Window Control  **********************************************/
+    public BrowserActions maximizeWindows() {
+        driver.manage().window().maximize();
+        return this;
+    }
+
+    public BrowserActions minimizeWindow() {
+        driver.manage().window().minimize();
+        return this;
+    }
+
+    public BrowserActions fullScreen() {
+        driver.manage().window().fullscreen();
+        return this;
+    }
+
+
+    public BrowserActions scrollToBottom() {
+        new Actions(driver).scrollByAmount(0, 2500).build().perform();
+        return this;
+    }
+
+    public BrowserActions scrollToAmount(int width, int height) {
+        new Actions(driver).scrollByAmount(width, height).build().perform();
+        return this;
+    }
 }

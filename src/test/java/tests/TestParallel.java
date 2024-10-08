@@ -1,60 +1,59 @@
 package tests;
 
-import driverfactory.Driver;
+import driverFactory.Driver;
 import org.openqa.selenium.By;
 import org.testng.annotations.*;
-import pages.Homepage;
+import pages.HomePage;
+import utilities.ScreenShotManager;
 
 import java.time.Duration;
 
 public class TestParallel {
-
-    public ThreadLocal<Driver> driver;
+//    public Driver driver;
+   public ThreadLocal<Driver> driver;
 
     @BeforeClass
-    @Parameters(value = {"browser"})
-    public void setUp(@Optional("CHROME") String browser) {
-        driver = new ThreadLocal<>();
-        driver.set(new Driver());
-        driver.get().get().manage().window().maximize();
-        driver.get().get().navigate().to("https://automationexercise.com/");
+    @Parameters(value = {"browserName"})
+    public void SetUp(@Optional("CHROME") String browserName) {
+  driver = new ThreadLocal<>();
+    driver.set(new Driver(browserName));
+//        driver = new Driver(browserName);
+        driver.get().browser().maximizeWindows();
+        driver.get().browser().navigateToURL("https://automationexercise.com/");
         driver.get().get().manage().timeouts().implicitlyWait(Duration.ofSeconds(50));
 
+//        driver.get().element().hoverOnItem(By.xpath("(//div[@class=\"overlay-content\"])[1]"))
+//                .click(By.xpath("(//a[@class=\"btn btn-default add-to-cart\"])[1]"));
     }
 
-    @Test
-    public void contactUsTest() throws InterruptedException {
-        driver.get().element().hoverOnItem(By.xpath("(//div[@class=\"product-overlay\"])[1]"))
-                .click(By.xpath("(//a[@class=\"btn btn-default add-to-cart\"])[1]"));
-        Thread.sleep(5000);
-
-        new Homepage(driver.get()).checkThatUserShouldBeNavigatedToHomePageSuccessfully()
+    @Test(priority = 1)
+    public void contactUsTest() {
+        new HomePage(driver.get())
+                .checkThatHomePageIsLoadedSuccessfully()
                 .clickOnContactUsLink()
                 .checkThatContactUsPageIsLoadedSuccessfully()
-                .fillInContactUsForm("Mohammed", "test12345@gmail.com", "Test", "Welcome")
+                .fillInContactUsFrom("Mariam", "TestTest122@gmail.com", "Test", "Welcome")
                 .clickOnSubmitButton()
                 .checkThatFormShouldBeSubmittedSuccessfully()
                 .clickOnHomeButton()
-                .checkThatUserShouldBeNavigatedToHomePageSuccessfully();
-
+                .checkThatHomePageIsLoadedSuccessfully();
+        ScreenShotManager.CaptureScreenShot(driver.get().get(), "ContactUs");
 
 
     }
 
 //    @AfterMethod
-//    public void screenshotOnFailure(ITestResult result) {
-//
-//        if(result.getStatus() == ITestResult.FAILURE){
+//    public void screenShotOnFailure(ITestResult result) {
+//        if (result.getStatus() == ITestResult.FAILURE) {
 //            System.out.println("Test Failed");
 //            System.out.println("Taking screen shot.....");
-//            ScreenShotManager.captureScreenshot(driver.get(), result.getName());
+//            ScreenShotManager.CaptureScreenShot(driver.get(), result.getName());
 //        }
-//
 //    }
 
     @AfterClass
     public void tearDown() {
-        driver.get().get().manage().deleteAllCookies();
+        driver.get().browser().deleteAllCookies();
         driver.get().quit();
     }
 }

@@ -1,61 +1,50 @@
 package listeners.testng;
 
-import driverfactory.Driver;
+import driverFactory.Driver;
 import org.openqa.selenium.WebDriver;
-import org.testng.*;
-import utilities.AllureReportHelper;
+import org.testng.IExecutionListener;
+import org.testng.ITestListener;
+import org.testng.ITestResult;
 import utilities.ScreenShotManager;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 
-import static utilities.properties.PropertiesManager.ReportConfig;
-import static utilities.properties.PropertiesManager.initializeProperties;
+public class TestNGListener implements ITestListener, IExecutionListener {
 
-public class TestNGListener implements IExecutionListener, ITestListener {
 
     @Override
     public void onExecutionStart() {
-        System.out.println("**************** Welcome to Selenium Framework *****************");
-        initializeProperties();
-
-        if(ReportConfig.getProperty("CleanAllureReport").equalsIgnoreCase("true")) {
-            AllureReportHelper.cleanAllureReport();
-            System.out.println("Allure Report Cleaned Successfully");
-        }
+        System.out.println("*************** Welcome to Selenium Framework ******************");
     }
+
 
     @Override
     public void onExecutionFinish() {
-        System.out.println("Generating Report........");
-        if(ReportConfig.getProperty("OpenAllureReportAfterExecution").equalsIgnoreCase("true")){
-            try {
-                System.out.println("Opening Allure Report");
-                Runtime.getRuntime().exec("reportGeneration.bat");
-            } catch (IOException e) {
-                System.out.println("Unable to Generate Allure Report, may be there's an issue in the batch file/commands");
-            }
-        }
-        System.out.println("********************* End of Execution *********************");
+        System.out.println("Generating Report.........");
+        System.out.println("****************** End of Execution ***************************");
+
     }
+
 
     @Override
     public void onTestStart(ITestResult result) {
-        System.out.println("*******  Starting Test: " + result.getName() + " ***************");
+        System.out.println("********* Starting Test: " + result.getName() + " ************");
+
     }
+
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        System.out.println("*******  Success of Test: " + result.getName() + " ***************");
+        System.out.println("********* Success of Test: " + result.getName() + " ************");
     }
 
-    @Override
     public void onTestFailure(ITestResult result) {
         System.out.println("Test Failed");
         System.out.println("Taking screen shot.....");
 
         Driver driver = null;
         ThreadLocal<Driver> driverThreadLocal;
+
         Object currentClass = result.getInstance();
         Field[] fields = result.getTestClass().getRealClass().getDeclaredFields();
 
@@ -64,30 +53,31 @@ public class TestNGListener implements IExecutionListener, ITestListener {
                 if (field.getType() == Driver.class) {
                     driver = (Driver) field.get(currentClass);
                 }
-
                 if (field.getType() == ThreadLocal.class) {
                     driverThreadLocal = (ThreadLocal<Driver>) field.get(currentClass);
                     driver = driverThreadLocal.get();
                 }
             }
+
         } catch (IllegalAccessException exception) {
-            System.out.println("Unable to get field, Field Should be public");
+            System.out.println("Unable to get field, Field should be public");
         }
-
-        assert driver != null;
-        ScreenShotManager.captureScreenshot(driver.get(), result.getName());
-
 //        try {
-//            ScreenShotManager.captureScreenshot(
-//                    (WebDriver) result.getTestClass().getRealClass().getDeclaredField("driver").get(result.getInstance()), result.getName());
-//        } catch (NoSuchFieldException e) {
-//            throw new RuntimeException(e);
+//            driver = (Driver) result.getTestClass().getRealClass().getDeclaredField("driver").get(result.getInstance());
 //        } catch (IllegalAccessException e) {
 //            throw new RuntimeException(e);
+//        } catch (NoSuchFieldException e) {
+//            throw new RuntimeException(e);
 //        }
+        assert driver != null;
+        ScreenShotManager.CaptureScreenShot(driver.get(), result.getName());
 
-        System.out.println("******* Failure of Test: " + result.getName() + " ***************");
+
+//        ScreenShotManager.CaptureScreenShot(Driver.get(), result.getName());
+        System.out.println("*********** failure of Test: " + result.getName() + " *************");
 
 
     }
+
+
 }

@@ -5,18 +5,19 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.net.URL;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-public class WebDriverListeners implements org.openqa.selenium.support.events.WebDriverListener {
+public class WebDriverListener implements org.openqa.selenium.support.events.WebDriverListener {
 
     private WebDriver driver;
 
-    public WebDriverListeners(WebDriver driver){
-        this.driver = driver;
+
+    public WebDriverListener(WebDriver driver){
+        this.driver=driver;
     }
+
+
 
     /************************************* Browser Actions Listeners ******************************************/
 
@@ -24,7 +25,6 @@ public class WebDriverListeners implements org.openqa.selenium.support.events.We
     public void afterGet(WebDriver driver, String url) {
         System.out.println("Getting to \"" + url + "\".");
     }
-
 //    @Override
 //    public void afterGetCurrentUrl(String result, WebDriver driver) {
 //        System.out.println("Current url is: \"" + result + "\".");
@@ -37,11 +37,6 @@ public class WebDriverListeners implements org.openqa.selenium.support.events.We
 
     @Override
     public void afterTo(WebDriver.Navigation navigation, String url) {
-        System.out.println("Navigating to url \"" + url + "\".");
-    }
-
-    @Override
-    public void afterTo(WebDriver.Navigation navigation, URL url) {
         System.out.println("Navigating to url \"" + url + "\".");
     }
 
@@ -78,7 +73,7 @@ public class WebDriverListeners implements org.openqa.selenium.support.events.We
 
     /************************************* Element Actions Listeners ******************************************/
 
-
+//Global wait
     @Override
     public void beforeFindElement(WebDriver driver, By locator) {
         try {
@@ -90,7 +85,9 @@ public class WebDriverListeners implements org.openqa.selenium.support.events.We
                     .until(ExpectedConditions.visibilityOfElementLocated(locator));
         } catch (org.openqa.selenium.TimeoutException timeoutException) {
             // In case the element was not found / not visible and the timeout expired
-            System.out.println(timeoutException.getMessage() + " || " + timeoutException.getCause().getMessage().substring(0, timeoutException.getCause().getMessage().indexOf("\n")));
+            System.out.println(timeoutException.getMessage() + " || "
+                    + timeoutException.getCause()
+                    .getMessage().substring(0, timeoutException.getCause().getMessage().indexOf("\n")));
             throw timeoutException;
         }
 
@@ -188,5 +185,25 @@ public class WebDriverListeners implements org.openqa.selenium.support.events.We
             return "\"" + accessibleName + "\"";
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
